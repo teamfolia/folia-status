@@ -1,0 +1,8 @@
+:root {
+    --body-background-color: #001716; /* Matches Folia's deep green background */
+    --body-text-color: #f0ffff; /* Matches Folia's light text color */
+    --card-background-color: #002b29; /* Matches Folia's card background color */
+    --nav-background-color: #002b29; /* Matches Folia's navigation background */
+    --nav-border-bottom-color: #015450; /* Matches Folia's teal accent for borders */
+  }
+  
