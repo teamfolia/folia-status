@@ -4,7 +4,7 @@ repo: folia-status # The name of this repository
 
 sites:
   - name: folia.com
-    url: https://www.folia.com
+    url: https://app-test.folia.com/server-info
 
 status-website:
   # Add your custom domain name, or remove the `cname` line if you don't have a domain
