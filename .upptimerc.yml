@@ -12,13 +12,13 @@ status-website:
   cname: status.folia.com
   # baseUrl: /folia-status
   # logoUrl: https://images.squarespace-cdn.com/content/v1/61153edec162a522b9892bba/b8169773-9d0d-437f-9ed3-7f63392569f3/Folia-Logo-Orange.png?format=1500w
-  name: app.folia.com
+  name: status.folia.com
   introTitle: "Let ideas flow like pen on pape"
-  introMessage: This site will tell you the status of the app.folia.com related services.
+  introMessage: This lists the status of the app.folia.com related services.
   navbar:
     - title: app.folia.com
       href: https://app.folia.com
-  themeUrl: https://teamfolia.github.io/folia-status/folia-theme.css
+  themeUrl: https://status.folia.com/folia-status/folia-theme.css
 
 # Upptime also supports notifications, assigning issues, and more
 # See https://upptime.js.org/docs/configuration
