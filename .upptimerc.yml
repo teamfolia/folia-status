@@ -9,8 +9,8 @@ sites:
 status-website:
   # Add your custom domain name, or remove the `cname` line if you don't have a domain
   # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  # cname: demo.upptime.js.org
-  baseUrl: /folia-status
+  cname: status.folia.com
+  # baseUrl: /folia-status
   # logoUrl: https://images.squarespace-cdn.com/content/v1/61153edec162a522b9892bba/b8169773-9d0d-437f-9ed3-7f63392569f3/Folia-Logo-Orange.png?format=1500w
   name: app.folia.com
   introTitle: "Let ideas flow like pen on pape"
