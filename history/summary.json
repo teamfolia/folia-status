@@ -1,20 +1,20 @@
 [
   {
-    "name": "folia.com website",
+    "name": "folia.com",
     "url": "https://www.folia.com",
     "icon": "https://icons.duckduckgo.com/ip3/www.folia.com.ico",
-    "slug": "folia-com-website",
+    "slug": "folia-com",
     "status": "up",
     "uptime": "100.00%",
     "uptimeDay": "100.00%",
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 375,
-    "timeDay": 375,
-    "timeWeek": 375,
-    "timeMonth": 375,
-    "timeYear": 375,
+    "time": 141,
+    "timeDay": 141,
+    "timeWeek": 141,
+    "timeMonth": 141,
+    "timeYear": 141,
     "dailyMinutesDown": {}
   }
 ]
