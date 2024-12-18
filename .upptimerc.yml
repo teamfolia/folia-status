@@ -18,7 +18,7 @@ status-website:
   navbar:
     - title: app.folia.com
       href: https://app.folia.com
-  themeUrl: https://status.folia.com/folia-status/folia-theme.css
+  themeUrl: https://status.folia.com/folia-theme.css
 
 # Upptime also supports notifications, assigning issues, and more
 # See https://upptime.js.org/docs/configuration
