@@ -11,7 +11,7 @@ status-website:
   # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
   # cname: demo.upptime.js.org
   baseUrl: /folia-status
-  logoUrl: https://images.squarespace-cdn.com/content/v1/61153edec162a522b9892bba/b8169773-9d0d-437f-9ed3-7f63392569f3/Folia-Logo-Orange.png?format=1500w
+  # logoUrl: https://images.squarespace-cdn.com/content/v1/61153edec162a522b9892bba/b8169773-9d0d-437f-9ed3-7f63392569f3/Folia-Logo-Orange.png?format=1500w
   name: app.folia.com
   introTitle: "Let ideas flow like pen on pape"
   introMessage: This site will tell you the status of the app.folia.com related services.
@@ -23,4 +23,4 @@ status-website:
 # Upptime also supports notifications, assigning issues, and more
 # See https://upptime.js.org/docs/configuration
 i18n:
-  footer: https://www.folia.com)
+  footer: https://www.folia.com
