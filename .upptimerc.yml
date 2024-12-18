@@ -3,8 +3,8 @@ owner: teamfolia # Your GitHub organization or username, where this repository l
 repo: folia-status # The name of this repository
 
 sites:
-  - name: folia.com
-    url: https://app-test.folia.com/server-info
+  - name: app.folia.com backend
+    url: https://app-api-test.folia.com/server-info
 
 status-website:
   # Add your custom domain name, or remove the `cname` line if you don't have a domain
