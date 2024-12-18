@@ -1,22 +1,20 @@
 [
   {
-    "name": "folia.com",
-    "url": "https://app-test.folia.com/server-info",
-    "icon": "https://icons.duckduckgo.com/ip3/app-test.folia.com.ico",
-    "slug": "folia-com",
-    "status": "down",
-    "uptime": "89.01%",
-    "uptimeDay": "89.01%",
-    "uptimeWeek": "89.01%",
-    "uptimeMonth": "89.01%",
-    "uptimeYear": "89.01%",
-    "time": 229,
-    "timeDay": 229,
-    "timeWeek": 229,
-    "timeMonth": 229,
-    "timeYear": 229,
-    "dailyMinutesDown": {
-      "2024-12-18": 0
-    }
+    "name": "app.folia.com backend",
+    "url": "https://app-api-test.folia.com/server-info",
+    "icon": "https://icons.duckduckgo.com/ip3/app-api-test.folia.com.ico",
+    "slug": "app-folia-com-backend",
+    "status": "up",
+    "uptime": "100.00%",
+    "uptimeDay": "100.00%",
+    "uptimeWeek": "100.00%",
+    "uptimeMonth": "100.00%",
+    "uptimeYear": "100.00%",
+    "time": 201,
+    "timeDay": 201,
+    "timeWeek": 201,
+    "timeMonth": 201,
+    "timeYear": 201,
+    "dailyMinutesDown": {}
   }
 ]
