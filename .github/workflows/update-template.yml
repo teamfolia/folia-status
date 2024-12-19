@@ -22,6 +22,12 @@ on:
     types: [update_template]
   workflow_dispatch:
 jobs:
+  noop:
+    name: No-op Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: echo "This is a no-op job. No actual actions will be executed."
   # release:
   #   name: Build
   #   runs-on: ubuntu-latest
