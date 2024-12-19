@@ -2,6 +2,9 @@
 owner: teamfolia # Your GitHub organization or username, where this repository lives
 repo: folia-status # The name of this repository
 
+workflowSchedule:
+  main: "*/5 * * * *"
+
 sites:
   - name: app.folia.com API
     url: https://app-api-test.folia.com/server-info
