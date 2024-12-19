@@ -23,15 +23,26 @@ status-website:
     function contains(selector, text) {
       var elements = document.querySelectorAll(selector);
       return Array.prototype.filter.call(elements, function(element) {
-        return RegExp(text).test(element.textContent);
+        return RegExp("^" + text).test(element.textContent);
       });
     }
     window.onload = function() {
       setTimeout(function() {
-        var activeIncidents = contains('section', 'Active Incidents');
-        if (activeIncidents.length > 0) activeIncidents[0].remove();
-        var pastIncidents = contains('section', 'Past Incidents');
-        if (pastIncidents.length > 0) pastIncidents[0].remove();
+        // Remove "Active Incidents" starting with "test"
+        var activeIncidents = document.querySelectorAll('section:has(h2:contains("Active Incidents")) li');
+        activeIncidents.forEach(function(item) {
+          if (item.textContent.trim().startsWith("test")) {
+            item.remove();
+          }
+        });
+
+        // Remove "Past Incidents" starting with "test"
+        var pastIncidents = document.querySelectorAll('section:has(h2:contains("Past Incidents")) li');
+        pastIncidents.forEach(function(item) {
+          if (item.textContent.trim().startsWith("test")) {
+            item.remove();
+          }
+        });
       }, 5000);
     };
 
