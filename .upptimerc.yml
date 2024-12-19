@@ -19,6 +19,21 @@ status-website:
     - title: app.folia.com
       href: https://app.folia.com
   themeUrl: https://status.folia.com/folia-theme.css
+  js: |
+    function contains(selector, text) {
+      var elements = document.querySelectorAll(selector);
+      return Array.prototype.filter.call(elements, function(element) {
+        return RegExp(text).test(element.textContent);
+      });
+    }
+    window.onload = function() {
+      setTimeout(function() {
+        var activeIncidents = contains('section', 'Active Incidents');
+        if (activeIncidents.length > 0) activeIncidents[0].remove();
+        var pastIncidents = contains('section', 'Past Incidents');
+        if (pastIncidents.length > 0) pastIncidents[0].remove();
+      }, 5000);
+    };
 
 # Upptime also supports notifications, assigning issues, and more
 # See https://upptime.js.org/docs/configuration
