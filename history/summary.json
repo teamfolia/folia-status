@@ -1,20 +1,20 @@
 [
   {
-    "name": "app.folia.com backend",
+    "name": "app.folia.com API",
     "url": "https://app-api-test.folia.com/server-info",
     "icon": "https://icons.duckduckgo.com/ip3/app-api-test.folia.com.ico",
-    "slug": "app-folia-com-backend",
+    "slug": "app-folia-com-api",
     "status": "up",
     "uptime": "100.00%",
     "uptimeDay": "100.00%",
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 190,
-    "timeDay": 190,
-    "timeWeek": 190,
-    "timeMonth": 190,
-    "timeYear": 190,
+    "time": 200,
+    "timeDay": 200,
+    "timeWeek": 200,
+    "timeMonth": 200,
+    "timeYear": 200,
     "dailyMinutesDown": {}
   }
 ]
