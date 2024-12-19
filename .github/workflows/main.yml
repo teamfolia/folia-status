@@ -5,6 +5,9 @@ on:
     branches:
       - main
   workflow_dispatch: 
+  repository_dispatch:
+    types:
+      - trigger-private-repo-workflow # Event type triggered by Uptime CI
 
 jobs:
   trigger-private-repo:
