@@ -34,7 +34,7 @@ status-website:
             }
           });
         });
-      }, 500);
+      }, 50);
     };
 
 # Upptime also supports notifications, assigning issues, and more
