@@ -20,30 +20,21 @@ status-website:
       href: https://app.folia.com
   themeUrl: https://status.folia.com/folia-theme.css
   js: |
-    function contains(selector, text) {
-      var elements = document.querySelectorAll(selector);
-      return Array.prototype.filter.call(elements, function(element) {
-        return RegExp("^" + text).test(element.textContent);
-      });
-    }
     window.onload = function() {
       setTimeout(function() {
-        // Remove "Active Incidents" starting with "test"
-        var activeIncidents = document.querySelectorAll('section:has(h2:contains("Active Incidents")) li');
-        activeIncidents.forEach(function(item) {
-          if (item.textContent.trim().startsWith("test")) {
-            item.remove();
-          }
-        });
+        // Select all sections with the header "Past Incidents"
+        const pastIncidentsSections = document.querySelectorAll('section:has(h2.svelte-18y4uo2)');
 
-        // Remove "Past Incidents" starting with "test"
-        var pastIncidents = document.querySelectorAll('section:has(h2:contains("Past Incidents")) li');
-        pastIncidents.forEach(function(item) {
-          if (item.textContent.trim().startsWith("test")) {
-            item.remove();
-          }
+        pastIncidentsSections.forEach((section) => {
+          const articles = section.querySelectorAll('article.down.link');
+          articles.forEach((article) => {
+            const heading = article.querySelector('h4');
+            if (heading && heading.textContent.trim().startsWith("test")) {
+              article.remove(); // Remove the article if it starts with "test"
+            }
+          });
         });
-      }, 5000);
+      }, 500);
     };
 
 # Upptime also supports notifications, assigning issues, and more
