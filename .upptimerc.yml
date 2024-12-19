@@ -21,6 +21,7 @@ status-website:
     - title: app.folia.com
       href: https://app.folia.com
   themeUrl: https://status.folia.com/folia-theme.css
+  update_template: false
   # js: |
   #   window.onload = function() {
   #     setTimeout(function() {
