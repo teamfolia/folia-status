@@ -19,23 +19,23 @@ status-website:
     - title: app.folia.com
       href: https://app.folia.com
   themeUrl: https://status.folia.com/folia-theme.css
-  js: |
-    window.onload = function() {
-      setTimeout(function() {
-        // Select all sections with the header "Past Incidents"
-        const pastIncidentsSections = document.querySelectorAll('section:has(h2.svelte-18y4uo2)');
+  # js: |
+  #   window.onload = function() {
+  #     setTimeout(function() {
+  #       // Select all sections with the header "Past Incidents"
+  #       const pastIncidentsSections = document.querySelectorAll('section:has(h2.svelte-18y4uo2)');
 
-        pastIncidentsSections.forEach((section) => {
-          const articles = section.querySelectorAll('article.down.link');
-          articles.forEach((article) => {
-            const heading = article.querySelector('h4');
-            if (heading && heading.textContent.trim().startsWith("test")) {
-              article.remove(); // Remove the article if it starts with "test"
-            }
-          });
-        });
-      }, 50);
-    };
+  #       pastIncidentsSections.forEach((section) => {
+  #         const articles = section.querySelectorAll('article.down.link');
+  #         articles.forEach((article) => {
+  #           const heading = article.querySelector('h4');
+  #           if (heading && heading.textContent.trim().startsWith("test")) {
+  #             article.remove(); // Remove the article if it starts with "test"
+  #           }
+  #         });
+  #       });
+  #     }, 50);
+  #   };
 
 # Upptime also supports notifications, assigning issues, and more
 # See https://upptime.js.org/docs/configuration
