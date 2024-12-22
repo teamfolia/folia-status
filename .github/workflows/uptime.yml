@@ -38,111 +38,115 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT || github.token }}
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
-      # - name: Trigger Workflow in Private Repo
-      #   run: |
-      #     curl -X POST \
-      #       -H "Accept: application/vnd.github+json" \
-      #       -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
-      #       https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
-      #       -d '{"ref":"main"}'
-      # Step 2: Generate a Unique Dispatch ID
-      - name: Trigger Workflow in Private Repo
-        id: trigger_workflow
-        run: |
-          # Generate a unique ID for this workflow run
-          UNIQUE_ID=$(uuidgen)
-          echo "Generated Unique ID: $UNIQUE_ID"
 
-          # Trigger the workflow dispatch
-          response=$(curl -s -w "%{http_code}" -X POST \
+          
+      - name: Trigger Workflow in Private Repo
+        run: |
+          curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
             https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
-            -d "{\"ref\":\"main\", \"inputs\": {\"unique_id\": \"$UNIQUE_ID\"}}")
+            -d '{"ref":"main"}'
 
-          # Extract the HTTP status code and response body
-          http_status="${response: -3}"
-          response_body="${response::-3}"
+            
+      # # Step 2: Generate a Unique Dispatch ID
+      # - name: Trigger Workflow in Private Repo
+      #   id: trigger_workflow
+      #   run: |
+      #     # Generate a unique ID for this workflow run
+      #     UNIQUE_ID=$(uuidgen)
+      #     echo "Generated Unique ID: $UNIQUE_ID"
 
-          echo "HTTP Status: $http_status"
-          echo "Response Body: $response_body"
+      #     # Trigger the workflow dispatch
+      #     response=$(curl -s -w "%{http_code}" -X POST \
+      #       -H "Accept: application/vnd.github+json" \
+      #       -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
+      #       https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
+      #       -d "{\"ref\":\"main\", \"inputs\": {\"unique_id\": \"$UNIQUE_ID\"}}")
 
-          # Output the unique ID for later steps
-          echo "unique_id=$UNIQUE_ID" >> $GITHUB_OUTPUT
+      #     # Extract the HTTP status code and response body
+      #     http_status="${response: -3}"
+      #     response_body="${response::-3}"
 
-          # Set outputs based on HTTP status
-          if [ "$http_status" -eq 204 ]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-            echo "message=Workflow dispatched successfully." >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
-            echo "message=HTTP Status $http_status: $response_body" >> $GITHUB_OUTPUT
-            exit 1
-          fi
+      #     echo "HTTP Status: $http_status"
+      #     echo "Response Body: $response_body"
 
-      - name: Poll Workflow Run Result
-        id: poll_workflow
-        run: |
-          UNIQUE_ID="${{ steps.trigger_workflow.outputs.unique_id }}"
-          echo "Polling for workflow run with Unique ID: $UNIQUE_ID"
+      #     # Output the unique ID for later steps
+      #     echo "unique_id=$UNIQUE_ID" >> $GITHUB_OUTPUT
 
-          # Poll for the workflow run with the matching unique_id
-          for i in {1..30}; do
-            echo "Polling for workflow run..."
-            run_data=$(curl -s \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
-              "https://api.github.com/repos/teamfolia/test-automation/actions/runs?event=workflow_dispatch&branch=main&per_page=10")
+      #     # Set outputs based on HTTP status
+      #     if [ "$http_status" -eq 204 ]; then
+      #       echo "status=success" >> $GITHUB_OUTPUT
+      #       echo "message=Workflow dispatched successfully." >> $GITHUB_OUTPUT
+      #     else
+      #       echo "status=failure" >> $GITHUB_OUTPUT
+      #       echo "message=HTTP Status $http_status: $response_body" >> $GITHUB_OUTPUT
+      #       exit 1
+      #     fi
 
-            run_id=$(echo "$run_data" | jq --arg UNIQUE_ID "$UNIQUE_ID" \
-                      '.workflow_runs[] | select(.inputs.unique_id == $UNIQUE_ID) | .id')
-            echo "run id - $run_id"          
+      # - name: Poll Workflow Run Result
+      #   id: poll_workflow
+      #   run: |
+      #     UNIQUE_ID="${{ steps.trigger_workflow.outputs.unique_id }}"
+      #     echo "Polling for workflow run with Unique ID: $UNIQUE_ID"
 
-            if [ -n "$run_id" ]; then
-              echo "Found workflow run ID: $run_id"
-              echo "status=found" >> $GITHUB_OUTPUT
-              echo "run_id=$run_id" >> $GITHUB_OUTPUT
-              break
-            fi
+      #     # Poll for the workflow run with the matching unique_id
+      #     for i in {1..30}; do
+      #       echo "Polling for workflow run..."
+      #       run_data=$(curl -s \
+      #         -H "Accept: application/vnd.github+json" \
+      #         -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
+      #         "https://api.github.com/repos/teamfolia/test-automation/actions/runs?event=workflow_dispatch&branch=main&per_page=10")
 
-            if [ $i -eq 30 ]; then
-              echo "status=timeout" >> $GITHUB_OUTPUT
-              echo "message=Workflow run not found within timeout." >> $GITHUB_OUTPUT
-              exit 1
-            fi
+      #       run_id=$(echo "$run_data" | jq --arg UNIQUE_ID "$UNIQUE_ID" \
+      #                 '.workflow_runs[] | select(.inputs.unique_id == $UNIQUE_ID) | .id')
+      #       echo "run id - $run_id"          
 
-            sleep 10
-          done
+      #       if [ -n "$run_id" ]; then
+      #         echo "Found workflow run ID: $run_id"
+      #         echo "status=found" >> $GITHUB_OUTPUT
+      #         echo "run_id=$run_id" >> $GITHUB_OUTPUT
+      #         break
+      #       fi
 
-      - name: Get Job Result
-        id: get_result
-        if: steps.poll_workflow.outputs.status == 'found'
-        run: |
-          run_id="${{ steps.poll_workflow.outputs.run_id }}"
-          echo "Fetching job result for workflow run ID: $run_id"
+      #       if [ $i -eq 30 ]; then
+      #         echo "status=timeout" >> $GITHUB_OUTPUT
+      #         echo "message=Workflow run not found within timeout." >> $GITHUB_OUTPUT
+      #         exit 1
+      #       fi
 
-          # Get the job result for the workflow run
-          job_data=$(curl -s \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
-            "https://api.github.com/repos/teamfolia/test-automation/actions/runs/$run_id/jobs")
+      #       sleep 10
+      #     done
 
-          job_status=$(echo "$job_data" | jq -r '.jobs[0].conclusion')
-          echo "Job Status: $job_status"
+      # - name: Get Job Result
+      #   id: get_result
+      #   if: steps.poll_workflow.outputs.status == 'found'
+      #   run: |
+      #     run_id="${{ steps.poll_workflow.outputs.run_id }}"
+      #     echo "Fetching job result for workflow run ID: $run_id"
 
-          # Output the result
-          if [ "$job_status" == "success" ]; then
-            echo "result=success" >> $GITHUB_OUTPUT
-          else
-            echo "result=failure" >> $GITHUB_OUTPUT
-          fi
+      #     # Get the job result for the workflow run
+      #     job_data=$(curl -s \
+      #       -H "Accept: application/vnd.github+json" \
+      #       -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
+      #       "https://api.github.com/repos/teamfolia/test-automation/actions/runs/$run_id/jobs")
 
-      - name: Output Final Result
-        run: |
-          echo "Final Result: ${{ steps.get_result.outputs.result }}"
-          if [ "${{ steps.get_result.outputs.result }}" == "success" ]; then
-            echo "Workflow job completed successfully."
-          else
-            echo "Workflow job failed."
-            exit 1
-          fi
+      #     job_status=$(echo "$job_data" | jq -r '.jobs[0].conclusion')
+      #     echo "Job Status: $job_status"
+
+      #     # Output the result
+      #     if [ "$job_status" == "success" ]; then
+      #       echo "result=success" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "result=failure" >> $GITHUB_OUTPUT
+      #     fi
+
+      # - name: Output Final Result
+      #   run: |
+      #     echo "Final Result: ${{ steps.get_result.outputs.result }}"
+      #     if [ "${{ steps.get_result.outputs.result }}" == "success" ]; then
+      #       echo "Workflow job completed successfully."
+      #     else
+      #       echo "Workflow job failed."
+      #       exit 1
+      #     fi
