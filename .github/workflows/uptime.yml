@@ -47,31 +47,32 @@ jobs:
       #       -d '{"ref":"main"}'
       - name: Trigger Workflow in Private Repo
         id: trigger_workflow
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.PRIVATE_REPO_PAT }}  # Use your PAT here
-          script: |
-            const owner = 'teamfolia';
-            const repo = 'test-automation';
-            const workflow_id = 'loadProject.yml';
-            const ref = 'main';
-            
-            // Trigger the workflow dispatch
-            const response = await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
-              owner,
-              repo,
-              workflow_id,
-              ref
-            });
-            
-            // Check if the dispatch was successful
-            if (response.status === 204) {
-              console.log('Workflow dispatched successfully.');
-              core.setOutput('status', 'success');
-            } else {
-              core.setOutput('status', 'failure');
-              throw new Error(`Failed to dispatch workflow: ${response.status}`);
-            }
+        run: |
+          # Trigger the workflow dispatch and capture response
+          response=$(curl -s -w "%{http_code}" -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
+            https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
+            -d '{"ref":"main"}')
+
+          # Extract the HTTP status code (last 3 characters)
+          http_status="${response: -3}"
+          
+          # Extract the response body (everything except the last 3 characters)
+          response_body="${response::-3}"
+
+          echo "HTTP Status: $http_status"
+          echo "Response Body: $response_body"
+
+          # Set outputs based on HTTP status
+          if [ "$http_status" -eq 204 ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "message=Workflow dispatched successfully." >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "message=HTTP Status $http_status: $response_body" >> $GITHUB_OUTPUT
+            exit 1
+          fi
 
       - name: Handle Trigger Response
         run: |
@@ -79,10 +80,8 @@ jobs:
           echo "Trigger Message: ${{ steps.trigger_workflow.outputs.message }}"
           if [ "${{ steps.trigger_workflow.outputs.status }}" == "success" ]; then
             echo "Workflow dispatched successfully."
-          elif [ "${{ steps.trigger_workflow.outputs.status }}" == "unexpected_status" ]; then
-            echo "Received an unexpected response status: ${{ steps.trigger_workflow.outputs.message }}"
-            exit 1
           else
-            echo "Failed to dispatch workflow. See message for details: ${{ steps.trigger_workflow.outputs.message }}"
+            echo "Failed to dispatch workflow. See message for details:"
+            echo "${{ steps.trigger_workflow.outputs.message }}"
             exit 1
           fi
