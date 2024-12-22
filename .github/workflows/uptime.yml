@@ -96,7 +96,7 @@ jobs:
 
             run_id=$(echo "$run_data" | jq --arg UNIQUE_ID "$UNIQUE_ID" \
                       '.workflow_runs[] | select(.inputs.unique_id == $UNIQUE_ID) | .id')
-            echo "$run_id"          
+            echo "run id - $run_id"          
 
             if [ -n "$run_id" ]; then
               echo "Found workflow run ID: $run_id"
