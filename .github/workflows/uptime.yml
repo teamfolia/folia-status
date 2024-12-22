@@ -45,43 +45,184 @@ jobs:
       #       -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
       #       https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
       #       -d '{"ref":"main"}'
+      # Step 2: Generate a Unique Dispatch ID
+      - name: Generate Unique Dispatch ID
+        id: generate_id
+        run: |
+          # Generate a timestamp as a simple unique ID
+          DISPATCH_ID=$(date +%s%N)
+          echo "Generated Dispatch ID: $DISPATCH_ID"
+          echo "dispatch_id=$DISPATCH_ID" >> $GITHUB_OUTPUT
+
+      # Step 3: Trigger the Workflow Dispatch in the Private Repository
       - name: Trigger Workflow in Private Repo
         id: trigger_workflow
         run: |
+          #!/bin/bash
+
+          # Define variables
+          OWNER="teamfolia"
+          REPO="test-automation"
+          WORKFLOW_FILE="loadProject.yml"
+          REF="main"
+          DISPATCH_ID="${{ steps.generate_id.outputs.dispatch_id }}"
+
           # Trigger the workflow dispatch and capture response
-          response=$(curl -s -w "%{http_code}" -X POST \
+          response=$(curl -s -w "\n%{http_code}" -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
-            https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
-            -d '{"ref":"main"}')
+            https://api.github.com/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW_FILE/dispatches \
+            -d '{"ref":"'"$REF"'","inputs":{"dispatch_id":"'"$DISPATCH_ID"'"}}')
 
-          # Extract the HTTP status code (last 3 characters)
-          http_status="${response: -3}"
-          
-          # Extract the response body (everything except the last 3 characters)
-          response_body="${response::-3}"
+          # Separate body and status code
+          body=$(echo "$response" | sed '$d')
+          status_code=$(echo "$response" | tail -n1)
 
-          echo "HTTP Status: $http_status"
-          echo "Response Body: $response_body"
+          # Log the full response
+          echo "----- HTTP Response -----"
+          echo "Status Code: $status_code"
+          echo "Response Body: $body"
+          echo "-------------------------"
 
           # Set outputs based on HTTP status
-          if [ "$http_status" -eq 204 ]; then
+          if [ "$status_code" -eq 204 ]; then
             echo "status=success" >> $GITHUB_OUTPUT
             echo "message=Workflow dispatched successfully." >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT
-            echo "message=HTTP Status $http_status: $response_body" >> $GITHUB_OUTPUT
+            echo "message=HTTP Status $status_code: $body" >> $GITHUB_OUTPUT
             exit 1
           fi
 
+      # Step 4: Handle the Trigger Response
       - name: Handle Trigger Response
         run: |
-          echo "Trigger Status: ${{ steps.trigger_workflow.outputs.status }}"
-          echo "Trigger Message: ${{ steps.trigger_workflow.outputs.message }}"
+          echo "🔄 Trigger Status: ${{ steps.trigger_workflow.outputs.status }}"
+          echo "📄 Trigger Message: ${{ steps.trigger_workflow.outputs.message }}"
           if [ "${{ steps.trigger_workflow.outputs.status }}" == "success" ]; then
-            echo "Workflow dispatched successfully."
+            echo "✅ Workflow dispatched successfully."
           else
-            echo "Failed to dispatch workflow. See message for details:"
-            echo "${{ steps.trigger_workflow.outputs.message }}"
+            echo "❌ Failed to dispatch workflow. See message for details."
             exit 1
           fi
+
+      # Step 5: Wait Briefly to Allow Workflow Run to Initiate
+      - name: Wait for Workflow Run to Start
+        if: steps.trigger_workflow.outputs.status == 'success'
+        run: |
+          echo "⏳ Waiting for the triggered workflow run to initiate..."
+          sleep 15  # Wait for 15 seconds
+
+      # Step 6: Fetch the Specific Workflow Run Details Using the Unique Dispatch ID
+      - name: Get Specific Workflow Run Details
+        if: steps.trigger_workflow.outputs.status == 'success'
+        id: get_run_details
+        run: |
+          #!/bin/bash
+
+          # Define variables
+          OWNER="teamfolia"
+          REPO="test-automation"
+          WORKFLOW_FILE="loadProject.yml"
+          DISPATCH_ID="${{ steps.generate_id.outputs.dispatch_id }}"
+
+          # Fetch the latest 50 workflow runs for the specified workflow file
+          runs=$(curl -s -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
+            https://api.github.com/repos/$OWNER/$REPO/actions/workflows/$WORKFLOW_FILE/runs?per_page=50)
+
+          # Extract run details using jq
+          # Ensure jq is installed
+          if ! command -v jq &> /dev/null
+          then
+              echo "jq is not installed. Installing..."
+              sudo apt-get update && sudo apt-get install -y jq
+          fi
+
+          # Find the workflow run with the matching dispatch_id
+          run=$(echo "$runs" | jq -r --arg DISPATCH_ID "$DISPATCH_ID" '.workflow_runs[] | select(.event == "workflow_dispatch" and .inputs.dispatch_id == $DISPATCH_ID)')
+
+          if [ -n "$run" ]; then
+            run_id=$(echo "$run" | jq -r '.id')
+            run_status=$(echo "$run" | jq -r '.status')
+            run_conclusion=$(echo "$run" | jq -r '.conclusion')
+            run_html_url=$(echo "$run" | jq -r '.html_url')
+
+            echo "----- Specific Workflow Run Details -----"
+            echo "Run ID: $run_id"
+            echo "Run Status: $run_status"
+            echo "Run Conclusion: $run_conclusion"
+            echo "Run URL: $run_html_url"
+            echo "-----------------------------------------"
+
+            # Set outputs
+            echo "run_id=$run_id" >> $GITHUB_OUTPUT
+            echo "run_status=$run_status" >> $GITHUB_OUTPUT
+            echo "run_conclusion=$run_conclusion" >> $GITHUB_OUTPUT
+            echo "run_html_url=$run_html_url" >> $GITHUB_OUTPUT
+          else
+            echo "❌ No workflow run found with Dispatch ID: $DISPATCH_ID"
+            exit 1
+          fi
+
+      # Step 7: Handle the Specific Workflow Run Response
+      - name: Handle Workflow Run Response
+        if: steps.trigger_workflow.outputs.status == 'success'
+        run: |
+          echo "🆔 Run ID: ${{ steps.get_run_details.outputs.run_id }}"
+          echo "📊 Run Status: ${{ steps.get_run_details.outputs.run_status }}"
+          echo "🏁 Run Conclusion: ${{ steps.get_run_details.outputs.run_conclusion }}"
+          echo "🔗 Run URL: ${{ steps.get_run_details.outputs.run_html_url }}"
+
+          if [ "${{ steps.get_run_details.outputs.run_status }}" == "completed" ]; then
+            if [ "${{ steps.get_run_details.outputs.run_conclusion }}" == "success" ]; then
+              echo "✅ Triggered workflow completed successfully."
+            else
+              echo "❌ Triggered workflow failed with conclusion: ${{ steps.get_run_details.outputs.run_conclusion }}"
+              echo "🔗 View the workflow run details here: ${{ steps.get_run_details.outputs.run_html_url }}"
+              exit 1
+            fi
+          else
+            echo "⚠️ Triggered workflow is still running with status: ${{ steps.get_run_details.outputs.run_status }}"
+            exit 1
+          fi
+      # - name: Trigger Workflow in Private Repo
+      #   id: trigger_workflow
+      #   run: |
+      #     # Trigger the workflow dispatch and capture response
+      #     response=$(curl -s -w "%{http_code}" -X POST \
+      #       -H "Accept: application/vnd.github+json" \
+      #       -H "Authorization: Bearer ${{ secrets.PRIVATE_REPO_PAT }}" \
+      #       https://api.github.com/repos/teamfolia/test-automation/actions/workflows/loadProject.yml/dispatches \
+      #       -d '{"ref":"main"}')
+
+      #     # Extract the HTTP status code (last 3 characters)
+      #     http_status="${response: -3}"
+          
+      #     # Extract the response body (everything except the last 3 characters)
+      #     response_body="${response::-3}"
+
+      #     echo "HTTP Status: $http_status"
+      #     echo "Response Body: $response_body"
+
+      #     # Set outputs based on HTTP status
+      #     if [ "$http_status" -eq 204 ]; then
+      #       echo "status=success" >> $GITHUB_OUTPUT
+      #       echo "message=Workflow dispatched successfully." >> $GITHUB_OUTPUT
+      #     else
+      #       echo "status=failure" >> $GITHUB_OUTPUT
+      #       echo "message=HTTP Status $http_status: $response_body" >> $GITHUB_OUTPUT
+      #       exit 1
+      #     fi
+
+      # - name: Handle Trigger Response
+      #   run: |
+      #     echo "Trigger Status: ${{ steps.trigger_workflow.outputs.status }}"
+      #     echo "Trigger Message: ${{ steps.trigger_workflow.outputs.message }}"
+      #     if [ "${{ steps.trigger_workflow.outputs.status }}" == "success" ]; then
+      #       echo "Workflow dispatched successfully."
+      #     else
+      #       echo "Failed to dispatch workflow. See message for details:"
+      #       echo "${{ steps.trigger_workflow.outputs.message }}"
+      #       exit 1
+      #     fi
