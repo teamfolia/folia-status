@@ -75,9 +75,14 @@ jobs:
 
       - name: Handle Trigger Response
         run: |
+          echo "Trigger Status: ${{ steps.trigger_workflow.outputs.status }}"
+          echo "Trigger Message: ${{ steps.trigger_workflow.outputs.message }}"
           if [ "${{ steps.trigger_workflow.outputs.status }}" == "success" ]; then
             echo "Workflow dispatched successfully."
+          elif [ "${{ steps.trigger_workflow.outputs.status }}" == "unexpected_status" ]; then
+            echo "Received an unexpected response status: ${{ steps.trigger_workflow.outputs.message }}"
+            exit 1
           else
-            echo "Failed to dispatch workflow."
+            echo "Failed to dispatch workflow. See message for details: ${{ steps.trigger_workflow.outputs.message }}"
             exit 1
           fi
