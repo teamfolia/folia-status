@@ -95,7 +95,8 @@ jobs:
               "https://api.github.com/repos/teamfolia/test-automation/actions/runs?event=workflow_dispatch&branch=main&per_page=10")
 
             run_id=$(echo "$run_data" | jq --arg UNIQUE_ID "$UNIQUE_ID" \
-              '.workflow_runs[] | select(.head_commit.message | contains($UNIQUE_ID)) | .id')
+                      '.workflow_runs[] | select(.inputs.unique_id == $UNIQUE_ID) | .id')
+            echo "$run_id"          
 
             if [ -n "$run_id" ]; then
               echo "Found workflow run ID: $run_id"
