@@ -49,12 +49,13 @@ jobs:
         id: trigger_workflow
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.PRIVATE_REPO_PAT }}  # Use your PAT here
           script: |
             const owner = 'teamfolia';
             const repo = 'test-automation';
             const workflow_id = 'loadProject.yml';
             const ref = 'main';
-      
+            
             // Trigger the workflow dispatch
             const response = await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
               owner,
@@ -62,11 +63,10 @@ jobs:
               workflow_id,
               ref
             });
-      
+            
             // Check if the dispatch was successful
             if (response.status === 204) {
               console.log('Workflow dispatched successfully.');
-              // You can set outputs if needed
               core.setOutput('status', 'success');
             } else {
               core.setOutput('status', 'failure');
@@ -76,8 +76,8 @@ jobs:
       - name: Handle Trigger Response
         run: |
           if [ "${{ steps.trigger_workflow.outputs.status }}" == "success" ]; then
-            echo "Workflow was triggered successfully."
+            echo "Workflow dispatched successfully."
           else
-            echo "Workflow trigger failed."
+            echo "Failed to dispatch workflow."
             exit 1
           fi
