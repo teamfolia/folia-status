@@ -5,16 +5,18 @@
     "icon": "https://icons.duckduckgo.com/ip3/app-api-test.folia.com.ico",
     "slug": "app-folia-com-api",
     "status": "up",
-    "uptime": "100.00%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "100.00%",
-    "uptimeMonth": "100.00%",
-    "uptimeYear": "100.00%",
-    "time": 201,
-    "timeDay": 195,
-    "timeWeek": 187,
-    "timeMonth": 198,
-    "timeYear": 201,
-    "dailyMinutesDown": {}
+    "uptime": "99.98%",
+    "uptimeDay": "97.80%",
+    "uptimeWeek": "99.69%",
+    "uptimeMonth": "99.93%",
+    "uptimeYear": "99.98%",
+    "time": 200,
+    "timeDay": 166,
+    "timeWeek": 179,
+    "timeMonth": 196,
+    "timeYear": 200,
+    "dailyMinutesDown": {
+      "2025-04-19": 32
+    }
   }
 ]
