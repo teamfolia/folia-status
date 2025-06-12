@@ -6,9 +6,9 @@
     "slug": "app-folia-com-api",
     "status": "down",
     "uptime": "99.96%",
-    "uptimeDay": "95.77%",
-    "uptimeWeek": "99.40%",
-    "uptimeMonth": "99.86%",
+    "uptimeDay": "94.41%",
+    "uptimeWeek": "99.20%",
+    "uptimeMonth": "99.82%",
     "uptimeYear": "99.96%",
     "time": 206,
     "timeDay": 191,
@@ -16,7 +16,7 @@
     "timeMonth": 213,
     "timeYear": 206,
     "dailyMinutesDown": {
-      "2025-06-12": 61,
+      "2025-06-12": 81,
       "2025-04-19": 32
     }
   }
