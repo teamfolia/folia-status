@@ -1,7 +1,7 @@
 url: https://app-api-test.folia.com/server-info
-status: down
-code: 502
-responseTime: 166
-lastUpdated: 2026-03-12T05:49:55.709Z
+status: up
+code: 200
+responseTime: 172
+lastUpdated: 2026-03-12T06:50:46.216Z
 startTime: 2024-12-19T09:42:10.522Z
 generator: Upptime <https://github.com/upptime/upptime>
