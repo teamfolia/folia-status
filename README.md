@@ -2,11 +2,11 @@
 
 This repository contains the open-source uptime monitor and status page for [teamfolia](https://www.folia.com), powered by [Upptime](https://github.com/upptime/upptime).
 
-[![Uptime CI](https://github.com/teamfolia/folia-status/workflows/Uptime%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions?query=workflow%3A%22Uptime+CI%22)
-[![Response Time CI](https://github.com/teamfolia/folia-status/workflows/Response%20Time%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions?query=workflow%3A%22Response+Time+CI%22)
-[![Graphs CI](https://github.com/teamfolia/folia-status/workflows/Graphs%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions?query=workflow%3A%22Graphs+CI%22)
-[![Static Site CI](https://github.com/teamfolia/folia-status/workflows/Static%20Site%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions?query=workflow%3A%22Static+Site+CI%22)
-[![Summary CI](https://github.com/teamfolia/folia-status/workflows/Summary%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions?query=workflow%3A%22Summary+CI%22)
+[![Uptime CI](https://github.com/teamfolia/folia-status/workflows/Uptime%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions/workflows/uptime.yml)
+[![Response Time CI](https://github.com/teamfolia/folia-status/workflows/Response%20Time%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions/workflows/response-time.yml)
+[![Graphs CI](https://github.com/teamfolia/folia-status/workflows/Graphs%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions/workflows/graphs.yml)
+[![Static Site CI](https://github.com/teamfolia/folia-status/workflows/Static%20Site%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions/workflows/site.yml)
+[![Summary CI](https://github.com/teamfolia/folia-status/workflows/Summary%20CI/badge.svg)](https://github.com/teamfolia/folia-status/actions/workflows/summary.yml)
 
 With [Upptime](https://upptime.js.org), you can get your own unlimited and free uptime monitor and status page, powered entirely by a GitHub repository. We use [Issues](https://github.com/teamfolia/folia-status/issues) as incident reports, [Actions](https://github.com/teamfolia/folia-status/actions) as uptime monitors, and [Pages](https://teamfolia.github.io/folia-status) for the status page.
 
