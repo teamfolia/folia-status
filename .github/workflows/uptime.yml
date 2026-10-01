@@ -31,16 +31,21 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GH_PAT || github.token }}
-      - name: Check endpoint status
-        uses: upptime/uptime-monitor@v1.38.0
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
         with:
-          command: "update"
+          node-version: 20
+
+      - name: Check endpoint status
+        run: |
+          git clone --depth 1 --branch v1.38.0 https://github.com/upptime/uptime-monitor /tmp/uptime-monitor
+          node /tmp/uptime-monitor/dist/index.js
         env:
+          INPUT_COMMAND: "update"
           GH_PAT: ${{ secrets.GH_PAT || github.token }}
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
 
-          
       - name: Trigger Workflow in Private Repo
         run: |
           curl -X POST \
