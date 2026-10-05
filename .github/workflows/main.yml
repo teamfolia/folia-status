@@ -12,6 +12,7 @@ on:
 jobs:
   trigger-private-repo:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Trigger Workflow in Private Repo
         run: |
